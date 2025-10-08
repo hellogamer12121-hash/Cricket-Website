@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CricNPlay | Cricket Scores, Quizzes & More</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    header {
+      background-color: #1e1e1e;
+      color: #fff;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav a {
+      color: #fff;
+      margin: 0 10px;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .hero, .section {
+      padding: 2rem;
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .card {
+      background: white;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .quiz-box button {
+      margin: 5px;
+      padding: 10px;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #1e1e1e;
+      color: #fff;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>CricNPlay</h1>
+    <nav>
+      <a onclick="showSection('home')">Home</a>
+      <a onclick="showSection('live')">Live Scores</a>
+      <a onclick="showSection('quizzes')">Quizzes</a>
+      <a onclick="showSection('fantasy')">Fantasy Picks</a>
+      <a onclick="showSection('about')">About</a>
+    </nav>
+  </header>
+
+  <section id="home" class="hero active">
+    <h2>Follow Live Cricket & Play Together</h2>
+    <p>Stay updated with live matches, test your cricket skills, and earn exciting rewards.</p>
+  </section>
+
+  <section id="live" class="section">
+    <h2>Live Scores</h2>
+    <div id="liveScores" class="card">Loading live scores...</div>
+  </section>
+
+  <section id="quizzes" class="section">
+    <h2>Cricket Quiz</h2>
+    <div class="card quiz-box">
+      <p>Who won the 2011 Cricket World Cup?</p>
+      <button onclick="checkAnswer(this, 'India')">India</button>
+      <button onclick="checkAnswer(this, 'Australia')">Australia</button>
+      <button onclick="checkAnswer(this, 'Sri Lanka')">Sri Lanka</button>
+    </div>
+    <div class="card quiz-box">
+      <p>Which player has the most centuries in international cricket?</p>
+      <button onclick="checkAnswer(this, 'Sachin Tendulkar')">Sachin Tendulkar</button>
+      <button onclick="checkAnswer(this, 'Virat Kohli')">Virat Kohli</button>
+      <button onclick="checkAnswer(this, 'Ricky Ponting')">Ricky Ponting</button>
+    </div>
+  </section>
+
+  <section id="fantasy" class="section">
+    <h2>Fantasy Picks</h2>
+    <div class="card">
+      <p><strong>Top Picks for Today:</strong></p>
+      <ul>
+        <li>Virat Kohli - Consistent performer</li>
+        <li>Jasprit Bumrah - Wicket-taking bowler</li>
+        <li>Ben Stokes - All-rounder potential</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="about" class="section">
+    <h2>About CricNPlay</h2>
+    <p>CricNPlay brings live scores, exciting quizzes, fantasy suggestions, and more for every cricket lover. Play, learn, and win rewards while enjoying your favorite sport.</p>
+  </section>
+
+  <footer>
+    &copy; 2025 CricNPlay. All rights reserved.
+  </footer>
+
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(id).classList.add('active');
+    }
+
+    function checkAnswer(button, correctAnswer) {
+      if (button.textContent === correctAnswer) {
+        button.style.backgroundColor = 'green';
+      } else {
+        button.style.backgroundColor = 'red';
+      }
+    }
+
+    async function fetchSeriesFromBackend() {
+      try {
+        const response = await fetch('http://localhost:3000/api/series');
+        const data = await response.json();
+        const liveDiv = document.getElementById('liveScores');
+        liveDiv.innerHTML = data.data.map(series => `
+          <div style="margin-bottom:10px;">
+            <strong>${series.name}</strong><br>
+            Status: ${series.status}<br>
+            Start Date: ${series.start_date}<br>
+            End Date: ${series.end_date}
+          </div>`).join('');
+      } catch (error) {
+        document.getElementById('liveScores').textContent = 'Failed to load series.';
+        console.error(error);
+      }
+    }
+
+    fetchSeriesFromBackend();
+  </script>
+</body>
+</html>
+
+
